@@ -3,6 +3,7 @@ import { expect } from '@playwright/test'
 
 export abstract class BaseCollectionPage extends BasePage {
   public abstract readonly resourceCollectionLabel: string | RegExp
+
   public readonly dataCollectionTable = this.page.getByTestId(
     'data-collection-table',
   )
@@ -10,6 +11,14 @@ export abstract class BaseCollectionPage extends BasePage {
     name: 'ID',
     exact: true,
   })
+
+  public readonly searchLink = this.page.getByTestId('collection-search-link')
+
+  async expectTableTotalItems(number: number) {
+    await expect(this.dataCollectionTable).toHaveText(
+      new RegExp(`\\d+\\sof\\s${number}$`),
+    )
+  }
 
   async clickTableHeader(name: string) {
     await this.dataCollectionTable

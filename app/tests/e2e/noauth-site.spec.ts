@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test'
 import { loadFixtures } from '@lib/api'
 import { SiteCollectionPage } from '@lib/pages/SiteCollectionPage'
 import { NavigationLinksButton } from '@lib/index'
+import { SearchPage } from '@lib/pages/SearchPage'
 test.beforeAll(async () => {
   loadFixtures()
 })
@@ -44,5 +45,22 @@ test.describe('Site [no-auth]', () => {
     await pom.openAndExpectDataTable()
     await pom.getItemNavigationLink('ED', NavigationLinksButton.Read).click()
     await pom.expectAppDataCardToHaveTitle(/Site\s/)
+  })
+
+  test('Collection can search', async ({ page }) => {
+    const pom = new SiteCollectionPage(page)
+    const searchPom = new SearchPage(page)
+    await pom.openAndExpectDataTable()
+    await pom.expectTableTotalItems(11)
+    await pom.searchLink.click()
+    await searchPom.expectAppDataCardToHaveTitle('sites')
+    await searchPom.expectAddFilterButtonToOpenDialog()
+    await searchPom.selectProperty('description')
+    await searchPom.selectOperator('contains')
+    await searchPom.operandSingleInput.fill('uae')
+    await searchPom.addFilterButton.click()
+    await searchPom.submitFiltersButton.click()
+    await pom.expectDataTable()
+    await pom.expectTableTotalItems(5)
   })
 })
