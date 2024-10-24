@@ -17,6 +17,12 @@ export class SearchPage extends BasePage {
     name: 'Add',
   })
 
+  public readonly clearFiltersButton = this.page.getByRole('button', {
+    name: 'Clear',
+  })
+  public readonly closeButton = this.page.getByRole('button', {
+    name: 'Close',
+  })
   public readonly submitFiltersButton = this.page.getByRole('button', {
     name: 'Submit',
   })

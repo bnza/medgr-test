@@ -9,4 +9,7 @@ export abstract class BaseItemPage extends BasePage {
   async clickPageTab(name: string) {
     await this.page.getByRole('tab', { name }).click()
   }
+  async expectDataForm() {
+    await this.expectAppDataCardToHaveTitle(this.resourceItemLabel)
+  }
 }

@@ -1,5 +1,6 @@
 import { BasePage } from '@lib/pages/BasePage'
 import { expect } from '@playwright/test'
+import { NavigationLinksButton } from '@lib/index'
 
 export abstract class BaseCollectionPage extends BasePage {
   public abstract readonly resourceCollectionLabel: string | RegExp
@@ -82,5 +83,22 @@ export abstract class BaseCollectionPage extends BasePage {
     await (isEnabled
       ? expectation.not.toHaveAttribute('disabled')
       : expectation.toHaveAttribute('disabled', 'true'))
+  }
+
+  async expectUnauthenticatedUserNavigationLinkEnabledStatus() {
+    await this.expectItemNavigationLinkToBeEnabled(
+      0,
+      NavigationLinksButton.Read,
+    )
+    await this.expectItemNavigationLinkToBeEnabled(
+      0,
+      NavigationLinksButton.Update,
+      false,
+    )
+    await this.expectItemNavigationLinkToBeEnabled(
+      0,
+      NavigationLinksButton.Delete,
+      false,
+    )
   }
 }
