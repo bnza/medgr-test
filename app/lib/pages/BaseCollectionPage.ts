@@ -2,6 +2,13 @@ import { BasePage } from '@lib/pages/BasePage'
 import { expect } from '@playwright/test'
 import { NavigationLinksButton } from '@lib/index'
 
+type NavigationItemLinkStatus = [boolean, boolean, boolean]
+const navigationItemLinkStatusIndex = {
+  [NavigationLinksButton.Read]: 0,
+  [NavigationLinksButton.Update]: 1,
+  [NavigationLinksButton.Delete]: 2,
+}
+
 export abstract class BaseCollectionPage extends BasePage {
   public abstract readonly resourceCollectionLabel: string | RegExp
 
@@ -13,7 +20,12 @@ export abstract class BaseCollectionPage extends BasePage {
     exact: true,
   })
 
-  public readonly searchLink = this.page.getByTestId('collection-search-link')
+  public readonly searchLinkButton = this.page.getByTestId(
+    'collection-search-link',
+  )
+  public readonly createLinkButton = this.page.getByTestId(
+    'collection-create-link',
+  )
 
   async expectTableTotalItems(number: number) {
     await expect(this.dataCollectionTable).toHaveText(
@@ -69,6 +81,7 @@ export abstract class BaseCollectionPage extends BasePage {
     await expect(this.dataCollectionTable).toHaveCount(1)
     await expect(this.dataCollectionTable.getByText(/Loading/)).toHaveCount(0)
   }
+
   async expectItemNavigationLinkToBeEnabled(
     rowSelector: number | string | RegExp,
     testId: string,
@@ -85,20 +98,23 @@ export abstract class BaseCollectionPage extends BasePage {
       : expectation.toHaveAttribute('disabled', 'true'))
   }
 
-  async expectUnauthenticatedUserNavigationLinkEnabledStatus() {
+  async expectUnauthenticatedUserNavigationLinkEnabledStatus(
+    status: NavigationItemLinkStatus = [true, false, false],
+  ) {
     await this.expectItemNavigationLinkToBeEnabled(
       0,
       NavigationLinksButton.Read,
+      status[navigationItemLinkStatusIndex[NavigationLinksButton.Read]],
     )
     await this.expectItemNavigationLinkToBeEnabled(
       0,
       NavigationLinksButton.Update,
-      false,
+      status[navigationItemLinkStatusIndex[NavigationLinksButton.Update]],
     )
     await this.expectItemNavigationLinkToBeEnabled(
       0,
       NavigationLinksButton.Delete,
-      false,
+      status[navigationItemLinkStatusIndex[NavigationLinksButton.Delete]],
     )
   }
 }

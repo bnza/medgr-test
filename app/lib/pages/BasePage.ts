@@ -36,4 +36,7 @@ export abstract class BasePage {
   async expectAppDataCardToHaveTitle(title: string | RegExp) {
     await expect(this.appDataCard).toHaveText(title)
   }
+  async expectTextInputToHaveValue(label: string, value: string | RegExp) {
+    await expect(this.page.getByLabel(label)).toHaveValue(value)
+  }
 }
