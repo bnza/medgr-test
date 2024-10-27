@@ -15,7 +15,7 @@ test.describe('Resources [no-auth]', () => {
   }) => {
     const pom = new SiteCollectionPage(page)
     await pom.openAndExpectDataTable()
-    await pom.expectUnauthenticatedUserNavigationLinkEnabledStatus()
+    await pom.expectNavigationItemsLinkEnabledStatus()
   })
   test('Collection (site) can be ordered', async ({ page }) => {
     const pom = new SiteCollectionPage(page)
@@ -66,7 +66,7 @@ test.describe('Resources [no-auth]', () => {
   }) => {
     const pom = new StratigraphicUnitCollectionPage(page)
     await pom.openAndExpectDataTable()
-    await pom.expectUnauthenticatedUserNavigationLinkEnabledStatus()
+    await pom.expectNavigationItemsLinkEnabledStatus()
   })
 
   test('Collection (SU) can be ordered', async ({ page }) => {

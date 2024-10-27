@@ -98,21 +98,23 @@ export abstract class BaseCollectionPage extends BasePage {
       : expectation.toHaveAttribute('disabled', 'true'))
   }
 
-  async expectUnauthenticatedUserNavigationLinkEnabledStatus(
+  async expectNavigationItemsLinkEnabledStatus(
     status: NavigationItemLinkStatus = [true, false, false],
+    rowSelector?: number | string | RegExp,
   ) {
+    rowSelector = rowSelector || 0
     await this.expectItemNavigationLinkToBeEnabled(
-      0,
+      rowSelector,
       NavigationLinksButton.Read,
       status[navigationItemLinkStatusIndex[NavigationLinksButton.Read]],
     )
     await this.expectItemNavigationLinkToBeEnabled(
-      0,
+      rowSelector,
       NavigationLinksButton.Update,
       status[navigationItemLinkStatusIndex[NavigationLinksButton.Update]],
     )
     await this.expectItemNavigationLinkToBeEnabled(
-      0,
+      rowSelector,
       NavigationLinksButton.Delete,
       status[navigationItemLinkStatusIndex[NavigationLinksButton.Delete]],
     )

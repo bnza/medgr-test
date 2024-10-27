@@ -15,11 +15,7 @@ test.describe('Sites', () => {
       const pom = new SiteCollectionPage(page)
       const itemPom = new SiteItemPage(page)
       await pom.openAndExpectDataTable()
-      await pom.expectUnauthenticatedUserNavigationLinkEnabledStatus([
-        true,
-        true,
-        true,
-      ])
+      await pom.expectNavigationItemsLinkEnabledStatus([true, true, true])
 
       // CREATE
       await pom.createLinkButton.click()

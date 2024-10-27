@@ -24,11 +24,7 @@ test.describe('Stratigraphic Units', () => {
 
       // await itemPom.navigateFromSiteCollection('ED', 'ED\\.2023\\.1001')
       const pom = itemPom.siteItemPage.stratigraphicCollectionCard
-      await pom.expectUnauthenticatedUserNavigationLinkEnabledStatus([
-        true,
-        true,
-        true,
-      ])
+      await pom.expectNavigationItemsLinkEnabledStatus([true, true, true])
 
       // CREATE
       await pom.createLinkButton.click()
