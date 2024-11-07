@@ -4,6 +4,7 @@ import { UserCollectionPage } from '@lib/pages/UserCollectionPage'
 import { NavigationLinksButton } from '@lib/index'
 import { UserItemPage } from '@lib/pages/UserItemPage'
 import { LoginPage } from '@lib/pages/LoginPage'
+import { SitesUserItemPage } from '@lib/pages/SitesUserItemPage'
 
 test.beforeEach(async () => {
   loadFixtures()
@@ -64,6 +65,61 @@ test.describe('Users', () => {
       await loginPage.open()
       await loginPage.login({ email: 'user_base@example.com', password })
       await loginPage.expectAppSnackbarToHaveText(/successfully logged in/)
+    })
+
+    test('Can set user privileges on sites', async ({ page }) => {
+      const pom = new UserCollectionPage(page)
+      const itemPom = new UserItemPage(page)
+      const privilegesItemPom = new SitesUserItemPage(page)
+      await pom.openAndExpectDataTable()
+      await pom
+        .getItemNavigationLink(
+          'user_base@example.com',
+          NavigationLinksButton.Read,
+        )
+        .click()
+      await itemPom.clickPageTab('sites privileges')
+      const privilegesCollectionTable = itemPom.sitesUserCollectionPage
+      await privilegesCollectionTable.expectDataTable(false)
+      await privilegesCollectionTable.clickTableHeader('ID')
+      await privilegesCollectionTable.createLinkButton.click()
+      await privilegesItemPom.expectTextInputToBeDisabled('user')
+      await privilegesItemPom.fillAndClickAutocomplete(
+        privilegesItemPom.siteInput,
+        'ed',
+        true,
+      )
+      await privilegesItemPom.expectFormAlertMessage(/Duplicate/)
+      await privilegesItemPom.fillAndClickAutocomplete(
+        privilegesItemPom.siteInput,
+        'jb',
+        true,
+      )
+      await privilegesItemPom.expectFormAlertMessage(false, /Click/)
+      await privilegesItemPom.sitesUserPrivilegesCheckbox.click()
+      await privilegesItemPom.expectSubmitSucceed(
+        'Successfully created resource',
+        'read',
+      )
+      await expect(privilegesItemPom.sitesUserPrivilegesCheckbox).toHaveText(
+        'ROLE_SITE_EDITOR',
+      )
+      await privilegesItemPom.updateNavigationLink.click()
+      await privilegesItemPom.expectTextInputToBeDisabled('site')
+      await privilegesItemPom.expectTextInputToBeDisabled('user')
+      await privilegesItemPom.sitesUserPrivilegesCheckbox.click()
+      await privilegesItemPom.expectSubmitSucceed(
+        'Successfully updated resource',
+        'read',
+      )
+      await expect(privilegesItemPom.sitesUserPrivilegesCheckbox).toHaveText(
+        'ROLE_SITE_USER',
+      )
+      await privilegesItemPom.deleteNavigationLink.click()
+      await privilegesItemPom.expectSubmitSucceed(
+        'Successfully deleted resource',
+      )
+      await itemPom.expectDataPage()
     })
   })
 })

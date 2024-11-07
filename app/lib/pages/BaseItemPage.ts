@@ -18,6 +18,10 @@ export abstract class BaseItemPage extends BasePage {
   async clickPageTab(name: string) {
     await this.page.getByRole('tab', { name }).click()
   }
+
+  async clickBackButton() {
+    await this.page.getByTestId('navigation-link-back').click()
+  }
   async expectDataPage() {
     await this.expectAppDataCardToHaveTitle(this.resourceItemLabel)
   }
@@ -42,7 +46,7 @@ export abstract class BaseItemPage extends BasePage {
 
   async expectTextInputToBeDisabled(label: string, flag = true) {
     const expectation = expect(
-      this.dataItemForm.getByLabel(label),
+      this.dataItemForm.getByLabel(label, { exact: true }),
       // this.dataItemForm.locator('label', { hasText: new RegExp(`\^${label}`) }),
     )
 
@@ -62,18 +66,21 @@ export abstract class BaseItemPage extends BasePage {
     }
   }
 
-  async expectFormAlertMessage(message: string | RegExp | false) {
+  async expectFormAlertMessage(
+    message: string | RegExp | false,
+    hasNotText?: string | RegExp | undefined,
+  ) {
     if (false === message) {
       return await expect(
         this.dataItemForm
           .getByRole('alert')
-          .filter({ has: this.page.locator('div') }),
+          .filter({ has: this.page.locator('div'), hasNotText }),
       ).toHaveCount(0)
     }
     await expect(
       this.dataItemForm
         .getByRole('alert')
-        .filter({ has: this.page.locator('div') }),
+        .filter({ has: this.page.locator('div'), hasText: message }),
     ).toHaveText(message)
   }
 

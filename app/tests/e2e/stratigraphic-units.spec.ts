@@ -1,5 +1,5 @@
-import { test } from '@playwright/test'
-import { loadFixtures } from '@lib/api'
+import { expect, test } from '@playwright/test'
+import { loadFixtures, resetFixtureMedia } from '@lib/api'
 import { StratigraphicUnitCollectionPage } from '@lib/pages/StratigraphicUnitCollectionPage'
 import { StratigraphicUnitItemPage } from '@lib/pages/StratigraphicUnitItemPage'
 import { NavigationLinksButton } from '@lib/index'
@@ -9,9 +9,39 @@ test.beforeEach(async () => {
 })
 
 test.describe('Stratigraphic Units', () => {
+  test.describe('Base user', () => {
+    test.use({ storageState: 'playwright/.auth/base.json' })
+    test('Media tab works as expected', async ({ page }) => {
+      resetFixtureMedia()
+      const pom = new StratigraphicUnitCollectionPage(page)
+      await pom.openAndExpectDataTable()
+      const itemPom = await pom.navigateToItemMediaTab(0)
+      await itemPom.mediaObjectContainer.expectMediaCardsCount(1)
+      await itemPom.mediaObjectContainer.expectToBeReadonly()
+      await itemPom.clickBackButton()
+      await pom
+        .getItemNavigationLink('ED\\.2023\\.1001', NavigationLinksButton.Read)
+        .click()
+      await itemPom.clickPageTab('media')
+      await itemPom.mediaObjectContainer.expectToBeEditable()
+      await itemPom.mediaObjectContainer.expectDeleteMediaToBeSuccessful(0)
+      await itemPom.mediaObjectContainer.expectCreateMediaToBeSuccessful(
+        'ED241001A.xls',
+      )
+      await itemPom.mediaObjectContainer.uploadMedia(
+        'ED221001B_changedName.pdf',
+      )
+      await itemPom.expectAppSnackbarToHaveText(/Duplicate/)
+      await itemPom.mediaObjectContainer.createMediaObjectDialog
+        .getByRole('button', { name: 'close' })
+        .click()
+      await expect(
+        itemPom.mediaObjectContainer.createMediaObjectDialog,
+      ).toHaveCount(0)
+    })
+  })
   test.describe('Admin user', () => {
     test.use({ storageState: 'playwright/.auth/admin.json' })
-
     test('Stratigraphic Units base workflow', async ({ page }) => {
       const itemPom = new StratigraphicUnitItemPage(page)
       await itemPom.siteCollectionPage.open()
@@ -93,6 +123,17 @@ test.describe('Stratigraphic Units', () => {
         'Stratigraphic units',
         'sus',
       )
+    })
+
+    test('Media tab works as expected', async ({ page }) => {
+      const pom = new StratigraphicUnitCollectionPage(page)
+      await pom.openAndExpectDataTable()
+      const itemPom = await pom.navigateToItemMediaTab(0)
+      await itemPom.mediaObjectContainer.expectMediaCardsCount(1)
+      await itemPom.mediaObjectContainer.expectToBeEditable()
+      await itemPom.clickBackButton()
+      await pom.getItemNavigationLink(1, NavigationLinksButton.Read).click()
+      await itemPom.mediaObjectContainer.expectNoMediaFound()
     })
   })
 })

@@ -1,4 +1,4 @@
-import { expect, Page } from '@playwright/test'
+import { expect, Locator, Page } from '@playwright/test'
 import { isInViewport } from '@lib/index'
 export abstract class BasePage {
   protected abstract readonly path: string
@@ -26,6 +26,19 @@ export abstract class BasePage {
     await this.openAppNavigationDrawer()
     for (const testId of listItemsTestIds) {
       await this.appNavigationDrawer.getByTestId(testId).click()
+    }
+  }
+
+  async fillAndClickAutocomplete(
+    locator: Locator,
+    text: string,
+    tab: boolean = false,
+  ) {
+    await locator.fill(text)
+    await locator.page().waitForResponse(/.+/)
+    await locator.page().getByRole('option').first().click()
+    if (tab) {
+      await locator.press('Tab')
     }
   }
 

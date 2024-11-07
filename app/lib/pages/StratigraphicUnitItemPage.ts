@@ -2,6 +2,7 @@ import { BaseItemPage } from '@lib/pages/BaseItemPage'
 import { SiteCollectionPage } from '@lib/pages/SiteCollectionPage'
 import { NavigationLinksButton } from '@lib/index'
 import { SiteItemPage } from '@lib/pages/SiteItemPage'
+import MediaObjectJoinContainer from '@lib/locators/MediaObjectJoinContainer'
 
 export class StratigraphicUnitItemPage extends BaseItemPage {
   public readonly resourceItemLabel = /Stratigraphic Unit\W/
@@ -10,6 +11,17 @@ export class StratigraphicUnitItemPage extends BaseItemPage {
   #siteCollectionPage: SiteCollectionPage | undefined
   // @ts-ignore
   #siteItemPage: SiteItemPage | undefined
+  // @ts-ignore
+  #mediaObjectContainer: MediaObjectJoinContainer | undefined
+
+  get mediaObjectContainer() {
+    if (!this.#mediaObjectContainer) {
+      this.#mediaObjectContainer = new MediaObjectJoinContainer(
+        this.page.getByTestId('media-object-join-container'),
+      )
+    }
+    return this.#mediaObjectContainer
+  }
 
   public get siteCollectionPage() {
     if (!this.#siteCollectionPage) {
