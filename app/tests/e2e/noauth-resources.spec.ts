@@ -1,4 +1,4 @@
-import { test } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import { loadFixtures } from '@lib/api'
 import { SiteCollectionPage } from '@lib/pages/SiteCollectionPage'
 import { NavigationLinksButton } from '@lib/index'
@@ -16,6 +16,7 @@ test.describe('Resources [no-auth]', () => {
       const pom = new SiteCollectionPage(page)
       await pom.openAndExpectDataTable()
       await pom.expectNavigationItemsLinkEnabledStatus()
+      await expect(pom.downloadResourceButton).toHaveCount(0)
     })
     test('Collection can be ordered', async ({ page }) => {
       const pom = new SiteCollectionPage(page)
@@ -46,15 +47,16 @@ test.describe('Resources [no-auth]', () => {
       const searchPom = new SearchPage(page)
       await pom.openAndExpectDataTable()
       await pom.expectTableTotalItems(11)
-      await pom.searchLinkButton.click()
-      await searchPom.expectAppDataCardToHaveTitle('sites')
-      await searchPom.expectAddFilterButtonToOpenDialog()
-      await searchPom.selectProperty('description')
-      await searchPom.selectOperator('contains')
-      await searchPom.operandSingleInput.fill('uae')
-      await searchPom.addFilterButton.click()
-      await searchPom.submitFiltersButton.click()
-      await pom.expectDataTable()
+      await pom.simpleFilter()
+      // await pom.searchLinkButton.click()
+      // await searchPom.expectAppDataCardToHaveTitle('sites')
+      // await searchPom.expectAddFilterButtonToOpenDialog()
+      // await searchPom.selectProperty('description')
+      // await searchPom.selectOperator('contains')
+      // await searchPom.operandSingleInput.fill('uae')
+      // await searchPom.addFilterButton.click()
+      // await searchPom.submitFiltersButton.click()
+      // await pom.expectDataTable()
       await pom.expectTableTotalItems(5)
       await pom.searchLinkButton.click()
       await searchPom.clearFiltersButton.click()
@@ -68,6 +70,7 @@ test.describe('Resources [no-auth]', () => {
       const pom = new StratigraphicUnitCollectionPage(page)
       await pom.openAndExpectDataTable()
       await pom.expectNavigationItemsLinkEnabledStatus()
+      await expect(pom.downloadResourceButton).toHaveCount(0)
     })
     test('Collection can be ordered', async ({ page }) => {
       const pom = new StratigraphicUnitCollectionPage(page)

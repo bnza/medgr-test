@@ -8,9 +8,19 @@ test.beforeEach(async () => {
 })
 
 test.describe('Sites', () => {
+  test.describe('Base user', () => {
+    test.use({ storageState: 'playwright/.auth/base.json' })
+    test('Can download filtered data', async ({ page }) => {
+      const pom = new SiteCollectionPage(page)
+      await pom.openAndExpectDataTable()
+      await pom.simpleFilter()
+      await pom.downloadResourceButton.click()
+      await pom.downloadCollectionDialog.expectDownloadToBeSuccessful()
+      await pom.expectAppSnackbarToHaveText(/successfully downloaded/i)
+    })
+  })
   test.describe('Admin user', () => {
     test.use({ storageState: 'playwright/.auth/admin.json' })
-
     test('Sites base workflow', async ({ page }) => {
       const pom = new SiteCollectionPage(page)
       const itemPom = new SiteItemPage(page)

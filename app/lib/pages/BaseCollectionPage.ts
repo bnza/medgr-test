@@ -1,6 +1,7 @@
 import { BasePage } from '@lib/pages/BasePage'
 import { expect } from '@playwright/test'
 import { NavigationLinksButton } from '@lib/index'
+import ResourceCollectionDownloadDialog from '@lib/locators/ResourceCollectionDownloadDialog'
 
 type NavigationItemLinkStatus = [boolean, boolean, boolean]
 const navigationItemLinkStatusIndex = {
@@ -10,6 +11,8 @@ const navigationItemLinkStatusIndex = {
 }
 
 export abstract class BaseCollectionPage extends BasePage {
+  // @ts-ignore
+  #downloadCollectionDialog: ResourceCollectionDownloadDialog | undefined
   public abstract readonly resourceCollectionLabel: string | RegExp
 
   public readonly dataCollectionTable = this.page.getByTestId(
@@ -26,6 +29,18 @@ export abstract class BaseCollectionPage extends BasePage {
   public readonly createLinkButton = this.page.getByTestId(
     'collection-create-link',
   )
+  public readonly downloadResourceButton = this.page.getByTestId(
+    'download-resource-button',
+  )
+
+  get downloadCollectionDialog() {
+    if (!this.#downloadCollectionDialog) {
+      this.#downloadCollectionDialog = new ResourceCollectionDownloadDialog(
+        this.page.getByTestId('download-collection-dialog'),
+      )
+    }
+    return this.#downloadCollectionDialog
+  }
 
   async expectTableTotalItems(number: number) {
     await expect(this.dataCollectionTable).toHaveText(

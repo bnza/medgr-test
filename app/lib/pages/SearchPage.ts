@@ -43,10 +43,27 @@ export class SearchPage extends BasePage {
   }
 
   async expectAppDataCardToHaveTitle(title: string | RegExp) {
-    super.expectAppDataCardToHaveTitle(
+    await super.expectAppDataCardToHaveTitle(
       title instanceof RegExp
         ? title
         : new RegExp(`search\\s\\(${title}\\)`, 'i'),
     )
+  }
+
+  async simpleFilter(
+    title: string,
+    {
+      property,
+      operator,
+      value,
+    }: { property: string; operator: string; value: string },
+  ) {
+    await this.expectAppDataCardToHaveTitle(title)
+    await this.expectAddFilterButtonToOpenDialog()
+    await this.selectProperty(property)
+    await this.selectOperator(operator)
+    await this.operandSingleInput.fill(value)
+    await this.addFilterButton.click()
+    await this.submitFiltersButton.click()
   }
 }
