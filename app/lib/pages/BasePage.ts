@@ -34,9 +34,17 @@ export abstract class BasePage {
     text: string,
     tab: boolean = false,
   ) {
+    const responsePromise = locator
+      .page()
+      .waitForResponse(new RegExp('=' + text))
     await locator.fill(text)
-    await locator.page().waitForResponse(/.+/)
-    await locator.page().getByRole('option').first().click()
+    await responsePromise
+    await locator
+      .page()
+      .getByRole('option')
+      .filter({ hasText: text })
+      .first()
+      .click()
     if (tab) {
       await locator.press('Tab')
     }

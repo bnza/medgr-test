@@ -1,4 +1,5 @@
 import { BaseItemPage } from '@lib/pages/BaseItemPage'
+import StratigraphicUnitsRelationshipContainer from '@lib/locators/StratigraphicUnitsRelationshipContainer'
 
 export class SitesUserItemPage extends BaseItemPage {
   public readonly resourceItemLabel = /Sites\/Users\W/

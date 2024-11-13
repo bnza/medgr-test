@@ -20,7 +20,7 @@ test.describe('Stratigraphic Units', () => {
       await itemPom.mediaObjectContainer.expectToBeReadonly()
       await itemPom.clickBackButton()
       await pom
-        .getItemNavigationLink('ED\\.2023\\.1001', NavigationLinksButton.Read)
+        .getItemNavigationLink('ED\\.23\\.1001', NavigationLinksButton.Read)
         .click()
       await itemPom.clickPageTab('media')
       await itemPom.mediaObjectContainer.expectToBeEditable()
@@ -39,20 +39,59 @@ test.describe('Stratigraphic Units', () => {
         itemPom.mediaObjectContainer.createMediaObjectDialog,
       ).toHaveCount(0)
     })
+
+    test('Stratigraphic relationships units works as expected', async ({
+      page,
+    }) => {
+      const pom = new StratigraphicUnitCollectionPage(page)
+      await pom.openAndExpectDataTable()
+      await pom
+        .getItemNavigationLink('ED\\.23\\.1001', NavigationLinksButton.Read)
+        .click()
+      const itemPom = new StratigraphicUnitItemPage(page)
+      await itemPom.clickPageTab('relationships')
+      await itemPom.susRelationshipContainer.expectToBeReadonly()
+      await itemPom.susRelationshipContainer.expectCardToHaveChipsCount(
+        'cover to',
+        1,
+      )
+      await itemPom.susRelationshipContainer.enableEditingButton.click()
+      await itemPom.susRelationshipContainer.expectToBeEditable()
+      await itemPom.susRelationshipContainer.clickAddRelationshipButton(
+        'cover to',
+      )
+      await itemPom.susRelationshipContainer.submitCreateRelationship('03', 0)
+      await itemPom.expectAppSnackbarToHaveText(/Successfully created/)
+      await itemPom.susRelationshipContainer.expectCardToHaveChipsCount(
+        'cover to',
+        2,
+      )
+      await itemPom.susRelationshipContainer
+        .getSuRelationshipChip('cover to', '23.1002')
+        .getByTestId('delete-relationship-button')
+        .click()
+      await itemPom.susRelationshipContainer.deleteRelationshipDialog
+        .getByRole('button', { name: 'delete' })
+        .click()
+      await itemPom.expectAppSnackbarToHaveText(/Successfully deleted/)
+      await itemPom.susRelationshipContainer.expectCardToHaveChipsCount(
+        'cover to',
+        1,
+      )
+    })
   })
+
   test.describe('Admin user', () => {
     test.use({ storageState: 'playwright/.auth/admin.json' })
     test('Stratigraphic Units base workflow', async ({ page }) => {
       const itemPom = new StratigraphicUnitItemPage(page)
       await itemPom.siteCollectionPage.open()
-
       await itemPom.siteCollectionPage
         .getItemNavigationLink('ED', NavigationLinksButton.Read)
         .click()
       await itemPom.siteItemPage.expectDataForm()
       await itemPom.siteItemPage.clickPageTab('stratigraphic units')
 
-      // await itemPom.navigateFromSiteCollection('ED', 'ED\\.2023\\.1001')
       const pom = itemPom.siteItemPage.stratigraphicCollectionCard
       await pom.expectNavigationItemsLinkEnabledStatus([true, true, true])
 
