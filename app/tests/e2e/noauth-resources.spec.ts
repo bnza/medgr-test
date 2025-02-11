@@ -3,6 +3,7 @@ import { loadFixtures } from '@lib/api'
 import { SiteCollectionPage } from '@lib/pages/SiteCollectionPage'
 import { NavigationLinksButton } from '@lib/index'
 import { SearchPage } from '@lib/pages/SearchPage'
+import { MicroStratigraphicUnitCollectionPage } from '@lib/pages/MicroStratigraphicUnitCollectionPage'
 import { StratigraphicUnitCollectionPage } from '@lib/pages/StratigraphicUnitCollectionPage'
 import { StratigraphicUnitItemPage } from '@lib/pages/StratigraphicUnitItemPage'
 test.beforeAll(async () => {
@@ -48,20 +49,26 @@ test.describe('Resources [no-auth]', () => {
       await pom.openAndExpectDataTable()
       await pom.expectTableTotalItems(11)
       await pom.simpleFilter()
-      // await pom.searchLinkButton.click()
-      // await searchPom.expectAppDataCardToHaveTitle('sites')
-      // await searchPom.expectAddFilterButtonToOpenDialog()
-      // await searchPom.selectProperty('description')
-      // await searchPom.selectOperator('contains')
-      // await searchPom.operandSingleInput.fill('uae')
-      // await searchPom.addFilterButton.click()
-      // await searchPom.submitFiltersButton.click()
-      // await pom.expectDataTable()
       await pom.expectTableTotalItems(5)
       await pom.searchLinkButton.click()
       await searchPom.clearFiltersButton.click()
       await searchPom.submitFiltersButton.click()
       await pom.expectTableTotalItems(11)
+    })
+  })
+
+  test.describe('MU', () => {
+    test('Collection has expected navigation permissions', async ({ page }) => {
+      const pom = new MicroStratigraphicUnitCollectionPage(page)
+      await pom.openAndExpectDataTable()
+      await pom.expectNavigationItemsLinkEnabledStatus()
+      await expect(pom.downloadResourceButton).toHaveCount(0)
+    })
+    test('Collection can navigate to item page', async ({ page }) => {
+      const pom = new MicroStratigraphicUnitCollectionPage(page)
+      await pom.openAndExpectDataTable()
+      await pom.getItemNavigationLink(0, NavigationLinksButton.Read).click()
+      await pom.expectAppDataCardToHaveTitle(/Microstratigraphic\sUnit/)
     })
   })
 

@@ -39,3 +39,14 @@ setup('authenticate as base user', async ({ page }) => {
   )
   await page.context().storageState({ path: baseFile })
 })
+
+const geoFile = 'playwright/.auth/geo.json'
+setup('authenticate as geo archaeologist user', async ({ page }) => {
+  const loginPage = new LoginPage(page)
+  await loginPage.open()
+  await loginPage.login(credentials.GEO)
+  await expect(page.getByTestId('app-snackbar').first()).toHaveText(
+    /successfully logged in/,
+  )
+  await page.context().storageState({ path: geoFile })
+})
