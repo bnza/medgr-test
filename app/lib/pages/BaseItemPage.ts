@@ -71,10 +71,13 @@ export abstract class BaseItemPage extends BasePage {
     hasNotText?: string | RegExp | undefined,
   ) {
     if (false === message) {
+      const alerts = this.dataItemForm
+        .getByRole('alert')
+        .filter({ has: this.page.locator('div'), hasText: /^.+$/ })
       return await expect(
-        this.dataItemForm
-          .getByRole('alert')
-          .filter({ has: this.page.locator('div'), hasNotText }),
+        this.dataItemForm.locator('div.v-input--error').filter({
+          has: alerts,
+        }),
       ).toHaveCount(0)
     }
     await expect(
