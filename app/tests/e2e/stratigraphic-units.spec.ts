@@ -3,6 +3,7 @@ import { loadFixtures, resetFixtureMedia } from '@lib/api'
 import { StratigraphicUnitCollectionPage } from '@lib/pages/StratigraphicUnitCollectionPage'
 import { StratigraphicUnitItemPage } from '@lib/pages/StratigraphicUnitItemPage'
 import { NavigationLinksButton } from '@lib/index'
+import { DataImportPage } from '@lib/pages/DataImportPage'
 
 test.beforeEach(async () => {
   loadFixtures()
@@ -78,6 +79,80 @@ test.describe('Stratigraphic Units', () => {
         'cover to',
         1,
       )
+    })
+  })
+
+  test.describe('Editor user', () => {
+    test.use({ storageState: 'playwright/.auth/editor.json' })
+    test.describe('Import CSV file', () => {
+      test('Success', async ({ page }) => {
+        const pom = new StratigraphicUnitCollectionPage(page)
+        await pom.openAndExpectDataTable()
+        await pom.collectionImportLink.click()
+        const importPom = new DataImportPage(
+          page,
+          '/data/stratigraphic-units/import',
+        )
+        await importPom.uploadFile(
+          'su.csv',
+          'A short description of the file content',
+        )
+        await expect(page.getByText('Request in progress')).toHaveCount(1)
+        await expect(importPom.importFileStatusBanner).toHaveCount(1)
+        await expect(importPom.importedFileSuccessForm).toHaveCount(1)
+        await page.getByTestId('navigation-link-back').click()
+        await pom.collectionImportLink.click()
+        await importPom.uploadFile(
+          'su1.csv',
+          'A different short description of the file content',
+        )
+        await expect(importPom.importedFileSuccessForm).toHaveCount(1)
+      })
+      test('Validation failed', async ({ page }) => {
+        const importPom = new DataImportPage(
+          page,
+          '/data/stratigraphic-units/import',
+        )
+        await importPom.open()
+        await importPom.uploadFile(
+          'su_duplicate_entries.csv',
+          'A short description of the file content',
+        )
+        await expect(page.getByText('Request in progress')).toHaveCount(1)
+        await expect(importPom.importFileStatusBanner).toHaveCount(1)
+        await expect(importPom.importFileStatusBanner).toHaveText(
+          /validation failed/i,
+        )
+        await expect(importPom.verificationFailureLink).toHaveCount(1)
+      })
+      test('Wrong headers', async ({ page }) => {
+        const importPom = new DataImportPage(
+          page,
+          '/data/stratigraphic-units/import',
+        )
+        await importPom.open()
+        await importPom.uploadFile(
+          'wrong_headers.csv',
+          'A short description of the file content',
+        )
+        await expect(page.getByText('Request in progress')).toHaveCount(1)
+        await expect(importPom.importFileStatusBanner).toHaveCount(1)
+        await expect(page.getByText('MISSING HEADERS')).toHaveCount(2)
+      })
+      test('Wrong file type', async ({ page }) => {
+        const importPom = new DataImportPage(
+          page,
+          '/data/stratigraphic-units/import',
+        )
+        await importPom.open()
+        await importPom.uploadFile(
+          'test.pdf',
+          'A short description of the file content',
+        )
+        await expect(page.getByText('Request in progress')).toHaveCount(1)
+        await expect(importPom.importFileStatusBanner).toHaveCount(1)
+        await expect(page.getByText(/file ".+" is not a valid/i)).toHaveCount(2)
+      })
     })
   })
 

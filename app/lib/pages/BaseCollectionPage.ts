@@ -32,6 +32,9 @@ export abstract class BaseCollectionPage extends BasePage {
   public readonly downloadResourceButton = this.page.getByTestId(
     'download-resource-button',
   )
+  public readonly collectionImportLink = this.page.getByTestId(
+    'collection-import-link',
+  )
 
   get downloadCollectionDialog() {
     if (!this.#downloadCollectionDialog) {
