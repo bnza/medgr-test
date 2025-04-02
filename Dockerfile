@@ -1,12 +1,11 @@
 # FROM node:20
 
-FROM docker:27-cli
+FROM docker:28-cli
 
 # Get the latest version of Playwright
 FROM mcr.microsoft.com/playwright:jammy
 
-RUN apt-get update
-RUN apt-get install ca-certificates curl
+RUN apt-get update && apt-get install -y ca-certificates curl
 RUN install -m 0755 -d /etc/apt/keyrings
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 RUN chmod a+r /etc/apt/keyrings/docker.asc
