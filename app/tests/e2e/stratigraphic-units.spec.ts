@@ -173,6 +173,7 @@ test.describe('Stratigraphic Units', () => {
       // CREATE
       await pom.createLinkButton.click()
       await itemPom.expectDataForm()
+      await expect(itemPom.page.getByText('Ed-Dur')).toHaveCount(1)
       await itemPom.expectAlertMessageAfterFill(
         itemPom.page.getByLabel('year'),
         '2023',
