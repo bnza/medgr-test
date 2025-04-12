@@ -8,7 +8,9 @@
     "@types/node": "^20.8.10",
     "prettier": "^3.2.5"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "npx playwright test"
+  },
   "dependencies": {
     "dotenv": "^16.3.1"
   }
