@@ -1,9 +1,11 @@
-import { test } from '@playwright/test'
-import { loadFixtures } from '@lib/api'
+import { expect, test } from '@playwright/test'
+import { loadFixtures, resetFixtureMedia } from '@lib/api'
 import { StratigraphicUnitCollectionPage } from '@lib/pages/StratigraphicUnitCollectionPage'
 import { StratigraphicUnitItemPage } from '@lib/pages/StratigraphicUnitItemPage'
 import { SampleItemPage } from '@lib/pages/SampleItemPage'
 import DatePicker from '@lib/locators/DatePicker'
+import { NavigationLinksButton } from '@lib/index'
+import { SampleCollectionPage } from '@lib/pages/SampleCollectionPage'
 
 test.beforeEach(async () => {
   loadFixtures()
@@ -62,6 +64,24 @@ test.describe('Samples', () => {
       await pom.expectPageToHaveMode('delete')
       await page.getByRole('button', { name: 'delete' }).click()
       await pom.expectAppSnackbarToHaveText(/Successfully delete/)
+    })
+    test('Media tab works as expected', async ({ page }) => {
+      resetFixtureMedia()
+      const pom = new SampleCollectionPage(page)
+      await pom.openAndExpectDataTable()
+      const itemPom = await pom.navigateToItemMediaTab(0)
+      await itemPom.mediaObjectContainer.expectMediaCardsCount(0)
+      await itemPom.mediaObjectContainer.expectToBeReadonly()
+      await itemPom.clickBackButton()
+      await pom
+        .getItemNavigationLink('ED\\.23\\.1001\/1', NavigationLinksButton.Read)
+        .click()
+      await itemPom.clickPageTab('media')
+      await itemPom.mediaObjectContainer.expectToBeEditable()
+      await itemPom.mediaObjectContainer.expectCreateMediaToBeSuccessful(
+        'ED241001A.xls',
+      )
+      await itemPom.mediaObjectContainer.expectDeleteMediaToBeSuccessful(0)
     })
   })
 })

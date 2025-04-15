@@ -2,6 +2,7 @@ import { BasePage } from '@lib/pages/BasePage'
 import { expect } from '@playwright/test'
 import { NavigationLinksButton } from '@lib/index'
 import ResourceCollectionDownloadDialog from '@lib/locators/ResourceCollectionDownloadDialog'
+import { BaseItemPage } from '@lib/pages/BaseItemPage'
 
 type NavigationItemLinkStatus = [boolean, boolean, boolean]
 const navigationItemLinkStatusIndex = {
@@ -44,6 +45,8 @@ export abstract class BaseCollectionPage extends BasePage {
     }
     return this.#downloadCollectionDialog
   }
+
+  abstract getItemPageClass(): new (...args: any[]) => BaseItemPage
 
   async expectTableTotalItems(number: number) {
     await expect(this.dataCollectionTable).toHaveText(
@@ -139,5 +142,24 @@ export abstract class BaseCollectionPage extends BasePage {
       NavigationLinksButton.Delete,
       status[navigationItemLinkStatusIndex[NavigationLinksButton.Delete]],
     )
+  }
+
+  async navigateToItemPage(rowSelector: number | string | RegExp) {
+    await this.openAndExpectDataTable()
+    await this.getItemNavigationLink(
+      rowSelector,
+      NavigationLinksButton.Read,
+    ).click()
+    const itemPomConstructor = this.getItemPageClass()
+    const itemPom = new itemPomConstructor(this.page)
+    await itemPom.clickPageTab('media')
+    await itemPom.expectAppDataCardToHaveTitle(itemPom.resourceItemLabel)
+    return itemPom
+  }
+
+  async navigateToItemMediaTab(rowSelector: number | string | RegExp) {
+    const itemPom = await this.navigateToItemPage(rowSelector)
+    await itemPom.clickPageTab('media')
+    return itemPom
   }
 }

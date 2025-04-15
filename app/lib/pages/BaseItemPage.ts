@@ -1,6 +1,7 @@
 import { BasePage } from '@lib/pages/BasePage'
 import { expect, Locator } from '@playwright/test'
 import { NavigationLinksButton } from '@lib/index'
+import MediaObjectJoinContainer from '@lib/locators/MediaObjectJoinContainer'
 
 type ApiAction = 'read' | 'create' | 'update' | 'delete'
 export abstract class BaseItemPage extends BasePage {
@@ -15,6 +16,9 @@ export abstract class BaseItemPage extends BasePage {
   public readonly submitFormButton =
     this.appDataCard.getByTestId('submit-form-button')
 
+  public readonly mediaObjectContainer = new MediaObjectJoinContainer(
+    this.page.getByTestId('media-object-join-container'),
+  )
   async clickPageTab(name: string) {
     await this.page.getByRole('tab', { name }).click()
   }

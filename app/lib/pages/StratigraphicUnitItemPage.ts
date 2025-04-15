@@ -13,7 +13,7 @@ export class StratigraphicUnitItemPage extends BaseItemPage {
   // @ts-ignore
   #siteItemPage: SiteItemPage | undefined
   // @ts-ignore
-  #mediaObjectContainer: MediaObjectJoinContainer | undefined
+  // #mediaObjectContainer: MediaObjectJoinContainer | undefined
 
   // @ts-ignore
   #susRelationshipContainer: StratigraphicUnitsRelationshipContainer | undefined
@@ -27,14 +27,14 @@ export class StratigraphicUnitItemPage extends BaseItemPage {
     }
     return this.#susRelationshipContainer
   }
-  get mediaObjectContainer() {
-    if (!this.#mediaObjectContainer) {
-      this.#mediaObjectContainer = new MediaObjectJoinContainer(
-        this.page.getByTestId('media-object-join-container'),
-      )
-    }
-    return this.#mediaObjectContainer
-  }
+  // get mediaObjectContainer() {
+  //   if (!this.#mediaObjectContainer) {
+  //     this.#mediaObjectContainer = new MediaObjectJoinContainer(
+  //       this.page.getByTestId('media-object-join-container'),
+  //     )
+  //   }
+  //   return this.#mediaObjectContainer
+  // }
 
   public get siteCollectionPage() {
     if (!this.#siteCollectionPage) {
