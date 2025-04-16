@@ -93,6 +93,10 @@ export abstract class BaseCollectionPage extends BasePage {
     )
   }
 
+  async expectDataCardToHaveCollectionTitle() {
+    return this.expectAppDataCardToHaveTitle(this.resourceCollectionLabel)
+  }
+
   async openAndExpectDataTable() {
     await this.open()
     await this.expectDataTable()

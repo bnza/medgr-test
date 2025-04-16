@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { test } from '@playwright/test'
 import { loadFixtures, resetFixtureMedia } from '@lib/api'
 import { StratigraphicUnitCollectionPage } from '@lib/pages/StratigraphicUnitCollectionPage'
 import { StratigraphicUnitItemPage } from '@lib/pages/StratigraphicUnitItemPage'

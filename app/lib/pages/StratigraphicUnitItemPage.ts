@@ -2,7 +2,6 @@ import { BaseItemPage } from '@lib/pages/BaseItemPage'
 import { SiteCollectionPage } from '@lib/pages/SiteCollectionPage'
 import { NavigationLinksButton } from '@lib/index'
 import { SiteItemPage } from '@lib/pages/SiteItemPage'
-import MediaObjectJoinContainer from '@lib/locators/MediaObjectJoinContainer'
 import StratigraphicUnitsRelationshipContainer from '@lib/locators/StratigraphicUnitsRelationshipContainer'
 
 export class StratigraphicUnitItemPage extends BaseItemPage {

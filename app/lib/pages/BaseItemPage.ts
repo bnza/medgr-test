@@ -103,4 +103,8 @@ export abstract class BaseItemPage extends BasePage {
     }
     await this.expectFormAlertMessage(message)
   }
+
+  async expectDataCardToHaveItemTitle() {
+    return this.expectAppDataCardToHaveTitle(this.resourceItemLabel)
+  }
 }

@@ -9,6 +9,8 @@ import { StratigraphicUnitCollectionPage } from '@lib/pages/StratigraphicUnitCol
 import { StratigraphicUnitItemPage } from '@lib/pages/StratigraphicUnitItemPage'
 import InfoBox from '@lib/locators/InfoBox'
 import { SiteItemPage } from '@lib/pages/SiteItemPage'
+import { PotteryCollectionPage } from '@lib/pages/PotteryCollectionPage'
+import { PotteryItemPage } from '@lib/pages/PotteryItemPage'
 test.beforeAll(async () => {
   loadFixtures()
 })
@@ -89,6 +91,18 @@ test.describe('Resources [no-auth]', () => {
       await searchPom.clearFiltersButton.click()
       await searchPom.submitFiltersButton.click()
       await pom.expectTableTotalItems(11)
+    })
+  })
+
+  test.describe('pottery', () => {
+    test('Collection can navigate to item page', async ({ page }) => {
+      const pom = new PotteryCollectionPage(page)
+      const itemPom = new PotteryItemPage(page)
+      await pom.openAndExpectDataTable()
+      await pom.getItemNavigationLink(0, NavigationLinksButton.Read).click()
+      await itemPom.expectDataForm()
+      await itemPom.expectPageToHaveMode('read')
+      await itemPom.expectDataCardToHaveItemTitle()
     })
   })
 

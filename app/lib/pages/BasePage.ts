@@ -57,7 +57,19 @@ export abstract class BasePage {
   async expectAppDataCardToHaveTitle(title: string | RegExp) {
     await expect(this.appDataCard).toHaveText(title)
   }
+
   async expectTextInputToHaveValue(label: string, value: string | RegExp) {
-    await expect(this.page.getByLabel(label)).toHaveValue(value)
+    await expect(this.page.getByLabel(label, { exact: true })).toHaveValue(
+      value,
+    )
+  }
+
+  async expectAutocompleteToContainText(label: string, value: string | RegExp) {
+    await expect(
+      this.page
+        .getByLabel(label, { exact: true }) // Find the label
+        .locator('xpath=..'), // Move to parent
+      // .locator('.v-select__selection'),
+    ).toHaveText(value)
   }
 }
