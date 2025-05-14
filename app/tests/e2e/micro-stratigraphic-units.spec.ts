@@ -43,7 +43,7 @@ test.describe('MicroStratigraphicUnit', () => {
         )
         await page.getByTestId('collection-create-link').click()
         const pom = new MicroStratigraphicUnitItemPage(page)
-        await pom.expectDataPage()
+        await pom.expectPageToHaveMode('create')
 
         // CREATE
         await pom.sUSelect.click()
